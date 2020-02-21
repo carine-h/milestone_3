@@ -6,16 +6,10 @@ output: html_document
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(echo = FALSE)
 ```
 
 
-This paper looks at the polical echo chambers created in the family unit that add to increasing polarization. It is no secret that political polarization is one of the most divisive parts of American society, especially since the 1980s (Iyengar, Sood, and Lelkes 2012; Pew Research Center 2014). Therefore, it is worth looking at the various effects of polarization, specifically family socialization. The increased polarization has led to deepended partisanship within the family. This is found by comparing a 1965 Youth-Parent Political Socialization Panel data set to national surveys from 2015 and voter files from 2014 and 2016. More specifically, it is found that there are more copartisan couples and they pass their partisanship on to their offspring. Familial political agreement has increased in this age of polarization. Overall, the human tendency to avoid conflict results in polarization increasing copartisan couples and families.
+This paper looks at the polical echo chambers created in the family unit that add to increasing polarization. It is no secret that political polarization is one of the most divisive parts of American society, especially since the 1980s (Iyengar, Sood, and Lelkes 2012; Pew Research Center 2014). Therefore, it is worth looking at the various effects of polarization, specifically family socialization. The increased polarization has led to deepended partisanship within the family. This is found by comparing a 1965 Youth-Parent Political Socialization Panel data set to national surveys from 2015 and voter files from 2014 and 2016. More specifically, it is found that there are more copartisan couples and they pass their partisanship on to their offspring. Familial political agreement has increased in this age of polarization. Overall, the human tendency to avoid conflict results in partisan selection between spouses and the passing on of partisan tendencies to offspring. 
 
-Milestone #3. Public GitHub repo with your data and a non-trivial README. (You can still change your paper if you want.) 
-
-- Submit a one paragraph html to Canvas which summarizes, in your own words, your paper.
-
-- Include the url of your repo so we can check it out, if we choose to: https://github.com/carine-h/milestone_3.git
-
-- In the repo, you must include a copy of the code of the original paper, interspersed with several pages of your own comments, and reformatted to meet our coding style guidelines. 
+**The main code is in the milestone_3_ovetime-graphs.Rmd file.**
