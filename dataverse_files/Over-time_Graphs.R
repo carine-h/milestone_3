@@ -1,0 +1,483 @@
+#CARINE'S COMMENTS
+# this page of code is where the main figures for the paper come together - it is essential the main results page
+# figures 1-7 are coded here 
+# there numbers used for the plots are found in other files of code
+# overall, the first two figures are useful, the rest are cryptic and not even used in the paper 
+# there are lots of errors here and the code is not well documented, making me a little nervous about using it at all 
+# I ran through each ggplot in detail and found only 2 that were included in the final paper
+
+# there are comments between major chuncks, but the only ones worth looking at are the first few:
+
+#####################
+
+library(ggplot2)
+library(rgdal)
+library(gridExtra)
+library(dplyr)
+library(maptools)
+library(mapproj)
+library(rgeos)
+setwd("C:\\Users\\tobia\\Dropbox\\Partisan Homogeneity Project\\Graphs")
+#################################Homogeneity
+
+# the next two major sections are for figure one and figure two
+# figure one looks at interspousal correlation of partisan attitudes, policy preferences, religiosity, and personality/recreational between 1965 and 2015:
+# figure two looks at intergenerational correlation of partisan attitudes, policy preferences, religiosity, and personality/recreational between 1965 and 2015:
+
+
+#New Figure 1 with grid arrange
+#CARINE'S COMMENTS
+# this figure compares the correlation of partisanship between spouses between 1965 and 2015
+# here, the author is compiling the significant figures found for 2015 and 1965 partisan and policy preference in a data frame:
+ggdata=data.frame(estimate=c(0.76,0.75,0.80,0.86,0.82,0.74,0.84,0.72,0.75,0.62,
+                             #2015
+                            0.48,0.29,0.44,0.40,0.32,rep(NA,5),
+                            #1965
+                             0.69,0.71,0.72,0.64,0.76,0.72,0.52,0.65,0.64,0.71,
+                            #2015
+                            rep(NA,10),
+                            #1965
+                             0.82,0.79,0.63,0.88,0.88,0.82,0.92,0.86,0.9,0.81,
+                            #2015
+                            0.45,0.36,0.65,0.33,rep(NA,6),
+                            #1965
+                             0.90,0.81,
+                            #2015
+                            0.73,0.48,
+                            #1965
+                             0.31,0.67,0.80,NA,NA,
+                            #2015
+                            0.46,0.28,0.45,0.54,0.33,
+                            #1965
+                             0.44,0.42,0.46,0.34,0.72,0.56,0.59,0.55,
+                            #2015
+                            0.29,0.39,0.23,0.11,0.26,0.13,NA,NA
+                            #1965
+                            ), Domain=c(rep("Partisan Attitudes", 20),rep("Partisan Affect",20), rep("Policy Preferences", 20),rep("Religiosity",4),
+                                                                                rep("Political Predispositions", 10),rep("Personality and Recreational",16)),
+                  Year=c(rep("2015",10), rep("1965",10),rep("2015",10),rep("1965",10),rep("2015",10),rep("1965",10),rep("2015",2),
+                         rep("1965",2),rep("2015",5),rep("1965",5),rep("2015",8),rep("1965",8)))
+
+
+# the author is naming the observations here in the data table
+ggdata$Year<-factor(ggdata$Year)
+ggdata$Domain=factor(ggdata$Domain,levels=c('Partisan Attitudes',"Partisan Affect", "Policy Preferences", "Religiosity", "Political Predispositions", "Personality and Recreational"))
+
+
+# now, the data made in a table above is being plotted
+#means=aggregate(x = ggdata$estimate, by = list(ggdata$Domain,ggdata$Year), FUN = "mean", na.action=na.pass,na.rm=TRUE)
+plot1<-ggplot(data=ggdata[ggdata$Domain=="Partisan Attitudes"|ggdata$Domain=="Policy Preferences",], aes (Year,estimate))+ylab("Correlation") +ylim(0,1)+theme(
+ 
+# these are just stylistic elements of the graph: 
+  axis.line = element_line(colour = "black"),panel.grid.major = element_blank(),strip.text = element_text(size=20),
+  panel.grid.minor = element_blank(),
+  panel.border = element_blank(),
+  panel.background = element_blank(),
+  axis.text.x=element_blank(),
+  axis.text.y= element_text( colour='black', size=20, face='bold'),
+  axis.title.x= element_blank(),
+  axis.title.y= element_text( colour='black', size=20, face='bold'),
+  axis.ticks.x= element_blank(),
+  legend.title= element_text( colour='black', size=20, face='bold'),
+  legend.text= element_text( colour='black', size=20, face='bold'))
+# the plot is being made here and is a facet jitter plot separated by year:
+plot1<-plot1 + geom_jitter(size=3,aes(colour=Year)) + facet_grid(. ~Domain)+ stat_summary(fun.data = "mean_cl_boot", colour='black',alpha=.5)+scale_colour_grey()
+
+plot1
+# plot 1 is the top half of figure 1 in the paper (page 1331)
+
+
+# now it is time to make the second plot (bottom half) for figure one which looks at differences in spousal correlation among religiosity and personality/recreation between 1965 and 2015
+plot2<-ggplot(data=ggdata[ggdata$Domain=="Religiosity"#|ggdata$Domain=="Political Predispositions"
+                          |ggdata$Domain=="Personality and Recreational",], aes (Year,estimate))+ylab("Correlation") +ylim(0,1)+theme(
+  
+  axis.line = element_line(colour = "black"),panel.grid.major = element_blank(),strip.text = element_text(size=20),
+  panel.grid.minor = element_blank(),
+  panel.border = element_blank(),
+  panel.background = element_blank(),
+  axis.text.x=element_blank(),
+  axis.text.y= element_text( colour='black', size=20, face='bold'),
+  axis.title.x= element_blank(),
+  axis.ticks.x= element_blank(),
+  axis.title.y= element_text( colour='black', size=20, face='bold'),
+  legend.title= element_text( colour='black', size=20, face='bold'),
+  legend.text= element_text( colour='black', size=20, face='bold'))
+plot2<-plot2 + geom_jitter(size=3,aes(colour=Year)) + facet_grid(. ~Domain)+stat_summary(fun.data = "mean_cl_boot", colour='black',alpha=.5)+scale_colour_grey()
+
+# this chunk below creates figure 1 by putting the top and bottom halfs together:
+gridExtra::grid.arrange(plot1, plot2, nrow=2)
+g <- arrangeGrob(plot1, plot2, nrow=2)
+
+
+#FIGURE 2
+
+# this looks at the same varibales as above, but with intergenerational correlation:
+#ggsave(file="C:/Users/tobia/Dropbox/Partisan Homogeneity Project/Graphs/Correlations_Spouses.pdf", g,height=8,width=12) 
+#save manually
+#intergenerational
+# here, the author is compiling the significant figures found for 2015 and 1965 on intergenerational religion, lifestyle, partisan attitude, policy preference:
+ggdata=data.frame(estimate=c(0.64,0.58,0.63,0.75,0.70,0.65,0.68,0.61,0.61,0.53,
+                             #2015
+                             0.28,0.09,0.27,0.20,0.17,rep(NA,5),
+                             #1965
+                             0.62,0.48,0.61,0.57,0.61,0.65,0.55,0.52,0.56,0.60,
+                             #2015
+                             rep(NA,10),
+                             #1965
+                             0.62,0.56,NA,0.66,0.62,NA,0.79,0.68,0.83,0.67,
+                             #2015
+                             0.22,0.13,0.41,0.19,rep(NA,6),
+                             #1965
+                             0.59,0.69,
+                             #2015
+                             0.25,0.44,
+                             #1965
+                             0.31,0.50,0.42,NA,NA,
+                             #2015
+                             0.20,0.12,0.28,0.26,0.22,
+                             #1965
+                             rep(NA,4),0.44,0.68,0.57,0.39,
+                             #2015
+                             rep(NA,80)
+                             #1965
+), Domain=c(rep("Partisan Attitudes", 20),rep("Partisan Affect",20), rep("Policy Preferences", 20),rep("Religiosity",4),rep("Political Predispositions", 10),rep("Personality",16)),
+Year=c(rep("2015",10), rep("1965",10),rep("2015",10),rep("1965",10),rep("2015",10),rep("1965",10),rep("2015",2),
+       rep("1965",2),rep("2015",5),rep("1965",5),rep("2015",8),rep("1965",8)))
+
+ggdata$Year<-factor(ggdata$Year)
+ggdata$Domain=factor(ggdata$Domain,levels=c('Partisan Attitudes',"Partisan Affect", "Policy Preferences", "Religiosity","Political Predispositions", "Personality"))
+
+# the author is dealing with the stylistic elements of the top half of figure 2 (partisan attitude and policy preference):
+plot1<-ggplot(data=ggdata[ggdata$Domain=="Partisan Attitudes"|ggdata$Domain=="Policy Preferences",], aes (Year,estimate))+ylab("Correlation") +ylim(0,1)+theme(
+  
+  axis.line = element_line(colour = "black"),panel.grid.major = element_blank(),strip.text = element_text(size=20),
+  panel.grid.minor = element_blank(),
+  panel.border = element_blank(),
+  panel.background = element_blank(),
+  axis.text.x=element_blank(),
+  axis.text.y= element_text( colour='black', size=20, face='bold'),
+  axis.title.x= element_blank(),
+  axis.title.y= element_text( colour='black', size=20, face='bold'),
+  axis.ticks.x= element_blank(),
+  legend.title= element_text( colour='black', size=20, face='bold'),
+  legend.text= element_text( colour='black', size=20, face='bold'))
+plot1<-plot1 + geom_jitter(size=3,aes(colour=Year)) + facet_grid(. ~Domain)+ stat_summary(fun.data = "mean_cl_boot", colour='black',alpha=.5)+scale_colour_grey()
+
+# plot1 is the top half of figure 2 (partisan attitude and policy prefernces)
+# there is some error here because the graph does not match up:
+plot1
+
+# more stylistic elements for the second half of figure 2's plot (religiosity and personality):
+plot2<-ggplot(data=ggdata[ggdata$Domain=="Religiosity"
+                          #|ggdata$Domain=="Political Predispositions"
+                          |ggdata$Domain=="Personality",], aes (Year,estimate))+ylab("Correlation") +ylim(0,1)+theme(
+  axis.line = element_line(colour = "black"),panel.grid.major = element_blank(),strip.text = element_text(size=20),
+  panel.grid.minor = element_blank(),
+  panel.border = element_blank(),
+  panel.background = element_blank(),
+  axis.text.x=element_blank(),
+  axis.text.y= element_text( colour='black', size=20, face='bold'),
+  axis.title.x= element_blank(),
+  axis.ticks.x= element_blank(),
+  axis.title.y= element_text( colour='black', size=20, face='bold'),
+  legend.title= element_text( colour='black', size=20, face='bold'),
+  legend.text= element_text( colour='black', size=20, face='bold'))
+
+# the second plot is a jitter plot with facet by domain, or religion and lifestyle:
+plot2<-plot2 + geom_jitter(size=3,aes(colour=Year)) + facet_grid(. ~Domain)+stat_summary(fun.data = "mean_cl_boot", colour='black',alpha=.5)+scale_colour_grey()
+gridExtra::grid.arrange(plot1, plot2, nrow=2)
+
+# the bottom half for figure 2
+plot2
+
+# now the graphs are arranged one on top of the other, as is seen in the published paper:
+g <- arrangeGrob(plot1, plot2, nrow=2)
+#ggsave(file="C:/Users/tobia/Dropbox/Partisan Homogeneity Project/Graphs/Correlations_Intergenerational.pdf", g,height=8,width=12) 
+
+
+# the rest of the code is for figures NOT included in the final paper 
+# the next two bar graphs at least seem useful (interspousal and intergenerational correlation of views in the categories of partisan attitudes, policy preference, religiosity, and personality between 1965 and 2015)
+# the rest are cryptic and seem useless: 
+
+
+#################################################
+# figure 3 and 6 (no longer in paper, but very good figures!)
+##################################################
+
+# this figure was NOT in the final paper
+# this code creates a bar graph that looks at the interspousal correlation of views in the categories of partisan attitudes, policy preference, religiosity, and personality between 1965 and 2015:
+# here, the author puts the confidence intervals for each category for the 1965 data into a data frame:
+ggdata=data.frame(Category=factor(c("Partisan\nAttitudes","Policy\nPreferences",   "Religiosity", "Personality"),levels=c("Partisan\nAttitudes","Policy\nPreferences", "Religiosity", "Personality"))
+                  , Difference=c(0.8793411 ,0.8591515 ,0.8035407,0.5444145),
+                  Lower.CI=c(0.8590568,0.8357696,0.7720589,0.4831899),
+                  Upper.CI=c(0.8968682,0.8794231,0.8310890,0.6003404))
+
+# here, the author puts the confidence intervals for each category for the 2015 data into a data frame:
+ggdata$Year<-rep("2015", nrow(ggdata))
+ggdata_2=data.frame(Category=factor(c("Partisan\nAttitudes","Policy\nPreferences",  "Religiosity", "Personality"),levels=c("Partisan\nAttitudes","Policy\nPreferences",  "Religiosity", "Personality"))
+                  , Difference=c(0.4150798 ,0.3427717  ,0.4476356 ,0.1942314 ),
+                  Upper.CI=c(0.4903964,0.4236066,0.5201816,0.2843121),
+                  Lower.CI=c(0.3336088 ,0.2565208,0.3686761,0.1007513))
+ggdata_2$Year<-rep("1965", nrow(ggdata_2))
+
+# the plots are put together here, just the way they are displayed in the paper:
+ggdata=rbind(ggdata, ggdata_2)
+limits <- aes(ymax = Upper.CI, ymin=Lower.CI)
+
+# the plot here is a plot of category and spousal difference by year:
+p<-ggplot(ggdata, aes(Category,Difference,fill=Year))+
+  xlab("")+ylab("Interspousal Correlation")+ggtitle("")+
+# these are all stylistic elements of the graph:
+  theme(
+    axis.line = element_line(colour = "black"),panel.grid.major = element_blank(),
+    panel.grid.minor = element_blank(),
+    panel.border = element_blank(),
+    panel.background = element_blank(),
+    axis.ticks.x = element_blank(),
+    axis.title.x=element_text( colour='black',size=25),
+    axis.title.y=element_text(colour='black',size=25, face='bold'),    
+    axis.text.x=element_text( colour='black',size=25),
+    axis.text.y= element_text( colour='black',size=25, face='bold'),
+    plot.title = element_text(size=25),
+    legend.text=element_text(size=25),
+    legend.title = element_text(size=25))
+# the plot is a bar graph with a 95% confidence interval:
+p<-p + geom_bar(stat='identity', position="dodge")+geom_errorbar(limits, width=0.25, position=position_dodge(.9))+scale_fill_grey()
+
+
+#ggsave(filename = "C:/Users/tobia/Dropbox/Partisan Homogeneity Project/Graphs/Spousal_Similarity.pdf", plot=p, width=10,height=7)
+
+#New Figure 6: Intergenerational 2015 and 1965
+# also NOT in final paper
+# this code creates a bar graph that looks at the intergenerational correlation of views in the categories of partisan attitudes, policy preference, religiosity, and personality between 1965 and 2015:
+ggdata=data.frame(Category=factor(c("Partisan\nAttitudes","Policy\nPreferences",  "Religiosity",  "Personality"),levels=c("Partisan\nAttitudes","Policy\nPreferences",   "Religiosity",  "Personality"))
+                  , Difference=c(0.7042095,0.7103653,0.518477,0.4754362),
+                  Upper.CI=c(0.7442528,0.7520110,0.5774296,0.5380552),
+                  Lower.CI=c(0.6591218,0.66307097,0.4541459,0.4075982))
+
+ggdata$Year<-rep("2015", nrow(ggdata))
+
+ggdata_2=data.frame(Category=factor(c("Partisan\nAttitudes","Policy\nPreferences",   "Religiosity",  "Personality"),levels=c("Partisan\nAttitudes","Policy\nPreferences",  "Religiosity",  "Personality"))
+                  , Difference=c(0.2140545,0.2017779,0.2223229,NA),
+                  Lower.CI=c(0.1717503,0.1592489,0.1801632,NA),
+                  Upper.CI=c(0.2555708,0.2435594,0.2636673,NA))
+
+
+ggdata_2$Year<-rep("1965", nrow(ggdata_2))
+ggdata<-rbind(ggdata_2,ggdata)
+limits=aes(ymax=Upper.CI,ymin=Lower.CI)
+
+p<-ggplot(ggdata, aes(Category,Difference,fill=Year))+
+  xlab("")+ylab("Intergenerational Correlation")+ggtitle("")+
+  theme(
+    axis.line = element_line(colour = "black"),panel.grid.major = element_blank(),
+    panel.grid.minor = element_blank(),
+    panel.border = element_blank(),
+    panel.background = element_blank(),
+    axis.ticks.x = element_blank(),
+    
+    axis.title.x=element_text( colour='black',size=25),
+    axis.title.y=element_text(colour='black',size=25, face='bold'),    
+    axis.text.x=element_text( colour='black',size=25),
+    axis.text.y= element_text( colour='black',size=25, face='bold'),
+    plot.title = element_text(size=25),
+    legend.text=element_text(size=25),
+    legend.title = element_text(size=25))
+p<-p + geom_bar(stat='identity', position="dodge")+geom_errorbar(limits, width=0.25, position=position_dodge(.9),width=.7)+scale_fill_grey()
+
+#ggsave(filename = "C:/Users/tobia/Dropbox/Partisan Homogeneity Project/Graphs/Intergenerational_Similarity.pdf", plot=p, width=10,height=7)
+p
+
+############################
+##############################
+#For Appendix: Exchangeable dyad ordering
+
+# data frame for the confidence intervals in the interspousal correlation
+ggdata=data.frame(Category=factor(c("Partisan\nAttitudes","Policy\nPreferences",   "Religiosity", "Personality"),levels=c("Partisan\nAttitudes","Policy\nPreferences", "Religiosity", "Personality"))
+                  , Difference=c(0.8740212 ,0.8534296 ,0.802792,0.54602),
+                  Lower.CI=c(0.8529125,0.8291851,0.7712054,0.4849392),
+                  Upper.CI=c(0.8922767,0.8744692,0.8304354,0.6017996))
+
+# data frame for the confidence intervals in the interspousal correlation
+ggdata$Year<-rep("2015", nrow(ggdata))
+ggdata_2=data.frame(Category=factor(c("Partisan\nAttitudes","Policy\nPreferences",  "Religiosity", "Personality"),levels=c("Partisan\nAttitudes","Policy\nPreferences",  "Religiosity", "Personality"))
+                    , Difference=c(0.4303923 ,0.335372  ,0.3647528 ,0.1756198 ),
+                    Upper.CI=c(0.5044278,0.4167216,0.4440036,0.26650322),
+                    Lower.CI=c(0.3500746 ,0.2486933,0.5168675,0.08164089))
+ggdata_2$Year<-rep("1965", nrow(ggdata_2))
+
+ggdata=rbind(ggdata, ggdata_2)
+limits <- aes(ymax = Upper.CI, ymin=Lower.CI)
+
+# ggplot of the data above
+p<-ggplot(ggdata, aes(Category,Difference,fill=Year))+
+  xlab("")+ylab("Interspousal Correlation")+ggtitle("")+
+ # stylistic elements of the graph
+   theme(
+    axis.line = element_line(colour = "black"),panel.grid.major = element_blank(),
+    panel.grid.minor = element_blank(),
+    panel.border = element_blank(),
+    panel.background = element_blank(),
+    axis.ticks.x = element_blank(),
+    
+    axis.title.x=element_text( colour='black',size=25),
+    axis.title.y=element_text(colour='black',size=25, face='bold'),    
+    axis.text.x=element_text( colour='black',size=25),
+    axis.text.y= element_text( colour='black',size=25, face='bold'),
+    plot.title = element_text(size=25),
+    legend.text=element_text(size=25),
+    legend.title = element_text(size=25))
+p<-p + geom_bar(stat='identity', position="dodge")+geom_errorbar(limits, width=0.25, position=position_dodge(.9))+scale_fill_grey()
+
+p
+#ggsave(filename = "C:/Users/tobia/Dropbox/Partisan Homogeneity Project/Graphs/Spousal_Similarity_exchangeable.pdf", plot=p, width=10,height=7)
+
+
+
+#New Figure 6: Intergenerational 2015 and 1965
+# these are figures that look at spousal agreement rates but were NOT in the final papers and look to be deeply flaed graphs:
+ggdata=data.frame(Category=factor(c("Partisan\nAttitudes","Policy\nPreferences",  "Religiosity",  "Personality"),levels=c("Partisan\nAttitudes","Policy\nPreferences",   "Religiosity",  "Personality"))
+                  , Difference=c(0.6780909,0.6606802,0.4959609,0.4440368),
+                  Upper.CI=c(0.7210914,0.7055984,0.5568657,0.5091571),
+                  Lower.CI=c(0.6298865,0.6104738,0.4297513,0.3738614))
+
+ggdata$Year<-rep("2015", nrow(ggdata))
+
+ggdata_2=data.frame(Category=factor(c("Partisan\nAttitudes","Policy\nPreferences",   "Religiosity",  "Personality"),levels=c("Partisan\nAttitudes","Policy\nPreferences",  "Religiosity",  "Personality"))
+                    , Difference=c(0.21225,0.1621798,0.360148,NA),
+                    Lower.CI=c(0.169915,0.1190984,0.3209192,NA),
+                    Upper.CI=c(0.253803,0.2046517,0.3981432,NA))
+
+
+ggdata_2$Year<-rep("1965", nrow(ggdata_2))
+ggdata<-rbind(ggdata_2,ggdata)
+limits=aes(ymax=Upper.CI,ymin=Lower.CI)
+# graph of the figures in the data table created above:
+p<-ggplot(ggdata, aes(Category,Difference,fill=Year))+
+  xlab("")+ylab("Intergenerational Correlation")+ggtitle("")+
+  theme(
+    axis.line = element_line(colour = "black"),panel.grid.major = element_blank(),
+    panel.grid.minor = element_blank(),
+    panel.border = element_blank(),
+    panel.background = element_blank(),
+    axis.ticks.x = element_blank(),
+    axis.title.x=element_text( colour='black',size=25),
+    axis.title.y=element_text(colour='black',size=25, face='bold'),    
+    axis.text.x=element_text( colour='black',size=25),
+    axis.text.y= element_text( colour='black',size=25, face='bold'),
+    plot.title = element_text(size=25),
+    legend.text=element_text(size=25),
+    legend.title = element_text(size=25))
+p<-p + geom_bar(stat='identity', position="dodge")+geom_errorbar(limits, width=0.25, position=position_dodge(.9),width=.7)+scale_fill_grey()
+
+# the bar graph of the intergenerational correlation
+p
+#ggsave(filename = "C:/Users/tobia/Dropbox/Partisan Homogeneity Project/Graphs/Intergenerational_Similarity_exchangeable.pdf", plot=p, width=10,height=7)
+
+
+
+# again, these were not included and look to be pretty flawed:
+
+#Figure 5 and 6 in Analysis
+###################
+#Figure 7
+##############
+ggdata=data.frame(Class=1:4,
+                  Homogeneity=c(47.8,53.7,55.5,81.20666),
+                  Upper.CI=c(47.8+1.96*1.579608,53.7+1.96*1.576804,55.5+1.96*1.571544,80.54462+1.96*0.009171659),
+                  Lower.CI=c(47.8-1.96*1.579608,53.7-1.96*1.576804,55.5-1.96*1.571544,80.54462-1.96*0.009171659))
+
+
+limits <- aes(ymax = Upper.CI, ymin=Lower.CI)
+
+p<-ggplot(ggdata, aes(Class, Homogeneity,group=1))+ylim(40,90)+ggtitle("")+
+  xlab("")+ylab("Percent Agreement")+
+  theme(
+    axis.line = element_line(colour = "black"),panel.grid.major = element_blank(),
+    panel.grid.minor = element_blank(),
+    panel.border = element_blank(),
+    panel.background = element_blank(),
+    axis.ticks.x = element_blank(),
+    
+    axis.title.x=element_text( colour='black',size=25),
+    axis.title.y=element_text(colour='black',size=25, face='bold'),    
+    axis.text.x=element_text( colour='black',size=25),
+    axis.text.y= element_text( colour='black',size=25, face='bold'),
+    plot.title = element_text(),
+    legend.text=element_text(size=25))
+p<-p + geom_point(size=12) +geom_errorbar(limits, width=0.2)+scale_x_continuous(breaks=c(1,2,3,4),labels=c("Random\n Comparsion", "Within-Zip-Code\n Comparison", "Within-Census-Block\n Comparison", "Interspousal"))
+
+#ggplot2::#ggsave(filename="C:/Users/tobia/Dropbox/Partisan Homogeneity Project/Graphs/Figure7.pdf",plot=p,width=12,height=8)
+
+
+#Figure 8
+ggdata=data.frame(Class=1:3,
+                  Homogeneity=c(80.41154, 82.98149,81.65255),
+                  Upper.CI=c(81.377254+1.96*0.0144158,82.98149+1.96*0.2266997,81.65255+1.96*0.02799841),
+                  Lower.CI=c(81.377254-1.96*0.0144158,82.98149-1.96*0.2266997,81.65255-1.96*0.02799841))
+
+
+limits <- aes(ymax = Upper.CI, ymin=Lower.CI)
+
+p<-ggplot(ggdata, aes(Class, Homogeneity,group=1))+ylim(40,90)+ggtitle("")+
+  xlab("")+ylab("Percent Agreement")+
+  theme(
+    axis.line = element_line(colour = "black"),panel.grid.major = element_blank(),
+    panel.grid.minor = element_blank(),
+    panel.border = element_blank(),
+    panel.background = element_blank(),
+    axis.ticks.x = element_blank(),
+    
+    axis.title.x=element_text( colour='black',size=20),
+    axis.title.y=element_text(colour='black',size=20),    
+    axis.text.x=element_text( colour='black',size=20),
+    axis.text.y= element_text( colour='black',size=20),
+    plot.title = element_text(),
+    legend.text=element_text(size=20))
+p<-p + geom_point(size=12) +geom_errorbar(limits, width=0.2)+scale_x_continuous(limits=c(1,3.2),breaks=c(1,2,3),labels=c("National\nSpousal Homogeneity", "Within-Zip-Code\nSpousal Homogeneity", "Within-Census-Block\nSpousal Homogeneity"))
+
+p
+#ggplot2::#ggsave(filename="C:/Users/tobia/Dropbox/Partisan Homogeneity Project/Graphs and Draft/Figure8.pdf",plot=p,width=15,height=10)
+
+
+########################### Figure 8
+
+#again, another cryptic graph that doesn't tell us anything:
+
+#load("C:/Users/tobia/Dropbox/Partisan Homogeneity Project/Deliverables_20150921/Homogeneity_by_Age_including_independents.RData")
+#Hom=Hom[as.numeric(as.character(Hom$Age))>=20,]
+Hom$Upper.CI=Hom$Mean+1.96*Hom$SE
+Hom$Lower.CI=Hom$Mean-1.96*Hom$SE
+#Hom$Age
+#Hom$Age<-recode(factor(Hom$Age),"'25'='<25'")
+#ggdata=data.frame(Age=factor(c("<25", "25-29", "30-34","35-40", "40-44","45-49","50-54","55-59","60-64",">64"), levels=c("<25", "25-29", "30-34","35-40", "40-44","45-49","50-54","55-59","60-64",">64")),
+ #                       Homogeneity=c(0.7830493, 0.7940943, 0.8025480, 0.8097727, 0.8070167, 0.8072545, 0.8091924, 0.8185274, 0.8294694, 0.8540661))
+
+
+limits <- aes(ymax = Upper.CI, ymin=Lower.CI)
+
+p<-ggplot(Hom, aes(Age, Mean*100,group=1))+ylim(50,90)+
+  xlab("")+ylab("Agreement in %")+ggtitle("")+
+  theme(
+    axis.line = element_line(colour = "black"),panel.grid.major = element_blank(),
+    panel.grid.minor = element_blank(),
+    panel.border = element_blank(),
+    panel.background = element_blank(),
+    axis.ticks.x = element_blank(),
+    
+    axis.title.x=element_text( colour='black',size=20),
+    axis.title.y=element_text(colour='black',size=20),    
+    axis.text.x=element_text( colour='black',size=20),
+    axis.text.y= element_text( colour='black',size=20),
+    plot.title = element_text(size=20),
+    legend.text=element_text(size=20),
+    legend.title = element_text(size=20))
+p<-p + geom_line(colour='black',linetype=2)+geom_ribbon(aes(ymin=Lower.CI*100, ymax=Upper.CI*100),alpha=.8,fill='grey26')
+
+p
+
+
+#ggsave(filename = "C:/Users/tobia/Dropbox/Partisan Homogeneity Project/Graphs/Homogeneity_Age.pdf", plot=p, width=12,height=8)
+
+
+

@@ -1,0 +1,6 @@
+icpsr_yspouse73.dta (application/x-stata) 140590 bytes.
+Over-time_Graphs.R (type/x-r-syntax) 21721 bytes.
+panel1997.sav (application/x-spss-sav) 1059066 bytes.
+STAN0078_COUPLES_OUTPUT2.sav (application/x-spss-sav) 248645 bytes.
+STAN0078_OUTPUT2.sav (application/x-spss-sav) 241749 bytes.
+Voter_file.R (type/x-r-syntax) 95009 bytes.
