@@ -103,7 +103,7 @@ plot1
 # now it is time to make the second plot (bottom half) for figure one which looks at differences in spousal correlation among religiosity and personality/recreation between 1965 and 2015
 plot2<-ggplot(data=ggdata[ggdata$Domain=="Religiosity"#|ggdata$Domain=="Political Predispositions"
                           |ggdata$Domain=="Personality and Recreational",], aes (Year,estimate))+ylab("Correlation") +ylim(0,1)+theme(
-  
+ # here are the stylistic elements: 
   axis.line = element_line(colour = "black"),panel.grid.major = element_blank(),strip.text = element_text(size=20),
   panel.grid.minor = element_blank(),
   panel.border = element_blank(),
@@ -162,7 +162,7 @@ ggdata$Domain=factor(ggdata$Domain,levels=c('Partisan Attitudes',"Partisan Affec
 
 # the author is dealing with the stylistic elements of the top half of figure 2 (partisan attitude and policy preference):
 plot1<-ggplot(data=ggdata[ggdata$Domain=="Partisan Attitudes"|ggdata$Domain=="Policy Preferences",], aes (Year,estimate))+ylab("Correlation") +ylim(0,1)+theme(
-  
+# more stylistc elements: 
   axis.line = element_line(colour = "black"),panel.grid.major = element_blank(),strip.text = element_text(size=20),
   panel.grid.minor = element_blank(),
   panel.border = element_blank(),
@@ -183,7 +183,9 @@ plot1
 # more stylistic elements for the second half of figure 2's plot (religiosity and personality):
 plot2<-ggplot(data=ggdata[ggdata$Domain=="Religiosity"
                           #|ggdata$Domain=="Political Predispositions"
-                          |ggdata$Domain=="Personality",], aes (Year,estimate))+ylab("Correlation") +ylim(0,1)+theme(
+                          |ggdata$Domain=="Personality",], aes (Year,estimate))+ylab("Correlation") +ylim(0,1)+
+# stylistic elements:
+  theme(
   axis.line = element_line(colour = "black"),panel.grid.major = element_blank(),strip.text = element_text(size=20),
   panel.grid.minor = element_blank(),
   panel.border = element_blank(),
@@ -283,15 +285,16 @@ ggdata_2$Year<-rep("1965", nrow(ggdata_2))
 ggdata<-rbind(ggdata_2,ggdata)
 limits=aes(ymax=Upper.CI,ymin=Lower.CI)
 
+# here is the graph of the category and difference between generations:
 p<-ggplot(ggdata, aes(Category,Difference,fill=Year))+
   xlab("")+ylab("Intergenerational Correlation")+ggtitle("")+
+# stylistic elements:
   theme(
     axis.line = element_line(colour = "black"),panel.grid.major = element_blank(),
     panel.grid.minor = element_blank(),
     panel.border = element_blank(),
     panel.background = element_blank(),
     axis.ticks.x = element_blank(),
-    
     axis.title.x=element_text( colour='black',size=25),
     axis.title.y=element_text(colour='black',size=25, face='bold'),    
     axis.text.x=element_text( colour='black',size=25),
@@ -325,7 +328,7 @@ ggdata_2$Year<-rep("1965", nrow(ggdata_2))
 ggdata=rbind(ggdata, ggdata_2)
 limits <- aes(ymax = Upper.CI, ymin=Lower.CI)
 
-# ggplot of the data above
+# ggplot of the category and difference between spouses:
 p<-ggplot(ggdata, aes(Category,Difference,fill=Year))+
   xlab("")+ylab("Interspousal Correlation")+ggtitle("")+
  # stylistic elements of the graph
@@ -368,7 +371,8 @@ ggdata_2=data.frame(Category=factor(c("Partisan\nAttitudes","Policy\nPreferences
 ggdata_2$Year<-rep("1965", nrow(ggdata_2))
 ggdata<-rbind(ggdata_2,ggdata)
 limits=aes(ymax=Upper.CI,ymin=Lower.CI)
-# graph of the figures in the data table created above:
+
+# graph of the spousal agreement rate figures in the data table created above:
 p<-ggplot(ggdata, aes(Category,Difference,fill=Year))+
   xlab("")+ylab("Intergenerational Correlation")+ggtitle("")+
   theme(
@@ -395,6 +399,8 @@ p
 ```{r flawed, unused graphs}
 
 # again, these were not included and look to be pretty flawed:
+# this graph was pretty illegible - the points don't make much sense, there is no description, and it is not in the final paper
+
 
 #Figure 5 and 6 in Analysis
 ###################
@@ -461,6 +467,7 @@ p
 ########################### Figure 8
 
 #again, another cryptic graph that doesn't tell us anything:
+# this graph was pretty illegible - the points don't make much sense, there is no description, and it is not in the final paper
 
 #load("C:/Users/tobia/Dropbox/Partisan Homogeneity Project/Deliverables_20150921/Homogeneity_by_Age_including_independents.RData")
 #Hom=Hom[as.numeric(as.character(Hom$Age))>=20,]
