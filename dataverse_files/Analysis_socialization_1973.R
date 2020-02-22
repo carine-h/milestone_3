@@ -1,3 +1,8 @@
+# Carine comment: these are a bunch of mathematical caluclations for different means, etc. to use in the paper as basic summary statistics
+# it is NOT the main code for the paper
+
+
+
 ############# read in data#############################################
 #setwd("C:\\Users\\tobia\\Dropbox\\Partisan Homogeneity Project\\Jennings Data\\Parent 1965-1982/")
 
@@ -17,14 +22,22 @@ library(descr)
 library(polycor)
 library(xtable)
 library(stargazer)
+library(haven)
 # read in data##############################
 
 
 
 
-#couple_1973 <- read.dta("2waveparentspouse.dta")
-#offspring_1973 <- read.dta("2waveyouthspouse.dta")
+#couple_1973 <- read.dta("X2waveparentspouse.dta")
+#offspring_1973 <- read.dta("X2waveyouthspouse.dta")
 #offspring_1973_spouses <- read.dta("icpsr_yspouse73.dta")
+
+
+couple_1973 <- X2waveparentspouse
+offspring_1973 <- X2waveyouthspouse
+offspring_1973_spouses <- icpsr_yspouse73
+
+
 
 # merging variable in 1972-souses presumably v7805
 length(which(offspring_1973_spouses$v7805 %in% offspring_1973$v262))  #check

@@ -21,6 +21,11 @@ library(SDMTools)
 library(weights)
 # read in data##############################
 set.seed(2141)
+
+library(haven)
+couple_1965 <- read_dta("dataverse_files/07286-0001-Data.dta")
+View(couple_1965)
+
 #couple_1965 <- read.dta("07286-0001-Data.dta")
 ############################################################### Split in student-parent and parent-parent-student dyads#######################################
 ############################################################### single parent-student data
